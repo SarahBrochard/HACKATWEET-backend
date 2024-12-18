@@ -22,7 +22,7 @@ router.post('/postTweet', (req, res) => {
             const hashtag = hashtagMatch ? hashtagMatch[0] : null;
 
             const newTweet = new Tweet({
-                userId: req.body.userId,
+                userId: data.userId,
                 timing: new Date(),
                 text: req.body.text,
                 hashtag: hashtag,
@@ -35,14 +35,37 @@ router.post('/postTweet', (req, res) => {
         }
 
     })
-
-    // newTweet.save().then(newDoc => {
-    //     res.json({ result: true, message: newDoc });
-    // });
-
-
-
 })
+
+
+// création d'une autre route pour tester mon backend 
+router.post('/postTweetBack', (req, res) => {
+
+
+    const text = req.body.text;
+    const hashtagMatch = text.match(/#\w+/);
+    console.log(hashtagMatch)
+
+    const hashtag = hashtagMatch ? hashtagMatch[0] : null;
+
+    const newTweet = new Tweet({
+        userId: req.body.userId,
+        timing: new Date(),
+        text: req.body.text,
+        hashtag: hashtag,
+
+    });
+
+    newTweet.save().then(newDoc => {
+        res.json({ result: true, message: newDoc });
+    });
+
+    newTweet.save().then(newDoc => {
+        res.json({ result: true, message: newDoc });
+    });
+})
+
+
 // route testée et ok le 18/12/24
 
 // get Last Tweets
