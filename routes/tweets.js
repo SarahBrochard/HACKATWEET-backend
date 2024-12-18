@@ -65,16 +65,28 @@ router.delete('/deleteTweet', (req, res) => {
 router.post('/postLike', (req, res) => {
 
     const tweetId = req.body._id;
-    const userId = req.body.userId;
+    const likedByUser = req.body.userId;
 
     console.log("req body tweet id", tweetId);
 
     Tweet.findOne({ _id: tweetId })
         .then(data => {
             console.log(data.likes);
-            data.likes.push(userId)
+            data.likes.push(likedByUser)
             console.log(data.likes)
+
+
+            data.save()
+                .then(updatedTweet => {
+                    res.json({
+                        result: true,
+                        message: 'Tweet liked successfully',
+                        tweet: updatedTweet
+                    });
+                })
         });
+
+
 
 
 })
