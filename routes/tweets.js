@@ -8,36 +8,33 @@ require('../models/connection');
 
 // pour l'enregistrement d'un nouveau tweet
 router.post('/postTweet', (req, res) => {
-<<<<<<< HEAD
-   user.findOne({username : req.body.username}).then(data =>{
-    if(data === null){
-        res.json({result : false, error : 'user not found'})
-        return
-    };
-   })
-    const newTweet = new Tweet({
-        firstname: data.firstname,
-        username: data.username,
-=======
-    const text = req.body.text;
-    const hashtagMatch = text.match(/#\w+/);
-    console.log(hashtagMatch)
 
-    const hashtag = hashtagMatch ? hashtagMatch[0] : null;
+    User.findOne({ username: req.body.username }).then(data => {
+        if (data === null) {
+            res.json({ result: false, error: 'user not found' })
+            return
+        } else {
 
-    const newTweet = new Tweet({
-        userId: req.body.userId,
->>>>>>> 3c8367d3095a150d6e6bd2717cd74e82c56ca84b
-        timing: new Date(),
-        text: req.body.text,
-        hashtag: hashtag,
+            const text = req.body.text;
+            const hashtagMatch = text.match(/#\w+/);
+            console.log(hashtagMatch)
 
-    });
+            const hashtag = hashtagMatch ? hashtagMatch[0] : null;
 
-    newTweet.save().then(newDoc => {
-        res.json({ result: true, message: newDoc });
-    });
+            const newTweet = new Tweet({
+                userId: req.body.userId,
+                timing: new Date(),
+                text: req.body.text,
+                hashtag: hashtag,
 
+            });
+
+            newTweet.save().then(newDoc => {
+                res.json({ result: true, message: newDoc });
+            });
+        }
+
+    })
 
     // newTweet.save().then(newDoc => {
     //     res.json({ result: true, message: newDoc });
