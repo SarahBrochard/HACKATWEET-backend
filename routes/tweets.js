@@ -9,7 +9,7 @@ require('../models/connection');
 // pour l'enregistrement d'un nouveau tweet
 router.post('/postTweet', (req, res) => {
     const newTweet = new Tweet({
-        userId: req.body._id,
+        userId: req.body.userId,
         timing: new Date(),
         text: req.body.text,
 
@@ -58,9 +58,28 @@ router.delete('/deleteTweet', (req, res) => {
 // route testée ok 
 
 
-//todo -> clef étrangère sur firstname username sur tweets 
+//todo -> clef étrangère sur firstname username sur tweets -> ok done et testé 
+
 
 // route sur les like 
+router.post('/postLike', (req, res) => {
+
+    const tweetId = req.body._id;
+    const userId = req.body.userId;
+
+    console.log("req body tweet id", tweetId);
+
+    Tweet.findOne({ _id: tweetId })
+        .then(data => {
+            console.log(data.likes);
+            data.likes.push(userId)
+            console.log(data.likes)
+        });
+
+
+})
+
+
 
 
 // route sur les trends -> get hasttag tweet 
