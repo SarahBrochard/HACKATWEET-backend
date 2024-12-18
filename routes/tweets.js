@@ -8,9 +8,15 @@ require('../models/connection');
 
 // pour l'enregistrement d'un nouveau tweet
 router.post('/postTweet', (req, res) => {
+   user.findOne({username : req.body.username}).then(data =>{
+    if(data === null){
+        res.json({result : false, error : 'user not found'})
+        return
+    };
+   })
     const newTweet = new Tweet({
-        firstname: req.body.firstname,
-        username: req.body.username,
+        firstname: data.firstname,
+        username: data.username,
         timing: new Date(),
         text: req.body.text,
     });
