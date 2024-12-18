@@ -9,10 +9,10 @@ require('../models/connection');
 // pour l'enregistrement d'un nouveau tweet
 router.post('/postTweet', (req, res) => {
     const newTweet = new Tweet({
-        firstname: req.body.firstname,
-        username: req.body.username,
+        userId: req.body._id,
         timing: new Date(),
         text: req.body.text,
+
     });
 
     newTweet.save().then(newDoc => {
@@ -58,7 +58,12 @@ router.delete('/deleteTweet', (req, res) => {
 // route testée ok 
 
 
+//todo -> clef étrangère sur firstname username sur tweets 
 
+// route sur les like 
+
+
+// route sur les trends -> get hasttag tweet 
 
 
 module.exports = router;
