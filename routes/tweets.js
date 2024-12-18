@@ -2,6 +2,10 @@
 var express = require('express');
 var router = express.Router();
 const Tweet = require('../models/tweets');
+const Hashtag = require('../models/hashtags');
+const User = require('../models/users');
+
+
 
 require('../models/connection');
 
@@ -22,48 +26,30 @@ router.post('/postTweet', (req, res) => {
             const hashtag = hashtagMatch ? hashtagMatch[0] : null;
 
             const newTweet = new Tweet({
-                userId: data.userId,
+                userId: data._id,
                 timing: new Date(),
                 text: req.body.text,
                 hashtag: hashtag,
 
             });
 
+
+
             newTweet.save().then(newDoc => {
-                res.json({ result: true, message: newDoc });
-            });
+                const newHashtag = new Hashtag({
+                    hashtagName: hashtag,
+                });
+                newHashtag.save().then(newHash => {
+                    res.json({ result: true, message: newDoc, hastag: newHash });
+                });
+            })
+
+
         }
 
     })
 })
 
-
-// création d'une autre route pour tester mon backend 
-router.post('/postTweetBack', (req, res) => {
-
-
-    const text = req.body.text;
-    const hashtagMatch = text.match(/#\w+/);
-    console.log(hashtagMatch)
-
-    const hashtag = hashtagMatch ? hashtagMatch[0] : null;
-
-    const newTweet = new Tweet({
-        userId: req.body.userId,
-        timing: new Date(),
-        text: req.body.text,
-        hashtag: hashtag,
-
-    });
-
-    newTweet.save().then(newDoc => {
-        res.json({ result: true, message: newDoc });
-    });
-
-    newTweet.save().then(newDoc => {
-        res.json({ result: true, message: newDoc });
-    });
-})
 
 
 // route testée et ok le 18/12/24
