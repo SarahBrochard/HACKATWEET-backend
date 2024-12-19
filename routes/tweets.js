@@ -25,6 +25,8 @@ router.post('/postTweet', (req, res) => {
 
             const hashtag = hashtagMatch ? hashtagMatch[0] : null;
 
+
+
             const newTweet = new Tweet({
                 userId: data._id,
                 timing: new Date(),
@@ -125,7 +127,6 @@ router.post('/postLike', (req, res) => {
 
 
 
-// route sur les trends -> get hasttag tweet 
 
 
 module.exports = router;
