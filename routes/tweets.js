@@ -1,41 +1,68 @@
 var express = require("express");
 var router = express.Router();
-const Tweet = require("../models/tweets");
-const user = require("../models/users");
-require("../models/connection");
+const Tweet = require('../models/tweets');
+const Hashtag = require('../models/hashtags');
+const User = require('../models/users');
+
+
+
+require('../models/connection');
+
 
 // pour l'enregistrement d'un nouveau tweet
-router.post("/postTweet", (req, res) => {
-  user.findOne({ username: req.body.username }).then((data) => {
-    if (data === null) {
-      res.json({ result: false, error: "user not found" });
-      return;
-    }
+router.post('/postTweet', (req, res) => {
 
-    const newTweet = new Tweet({
-      firstname: data.firstname,
-      username: data.username,
-      timing: new Date(),
-      text: req.body.text,
-      hashtag: hashtag,
-    });
+    User.findOne({ username: req.body.username }).then(data => {
+        if (data === null) {
+            res.json({ result: false, error: 'user not found' })
+            return
+        } else {
 
-    newTweet.save().then((newDoc) => {
-      res.json({ result: true, message: newDoc });
-    });
-  });
-  // newTweet.save().then(newDoc => {
-  //     res.json({ result: true, message: newDoc });
-  // });
-});
+            const text = req.body.text;
+            const hashtagMatch = text.match(/#\w+/);
+            console.log(hashtagMatch)
+
+            const hashtag = hashtagMatch ? hashtagMatch[0] : null;
+
+
+
+            const newTweet = new Tweet({
+                userId: data._id,
+                timing: new Date(),
+                text: req.body.text,
+                hashtag: hashtag,
+
+            });
+
+
+
+            newTweet.save().then(newDoc => {
+                const newHashtag = new Hashtag({
+                    hashtagName: hashtag,
+                });
+                newHashtag.save().then(newHash => {
+                    res.json({ result: true, message: newDoc, hastag: newHash });
+                });
+            })
+
+
+        }
+
+    })
+})
+
+
+
 // route testée et ok le 18/12/24
 
 // get Last Tweets
-router.get("/lastTweets", (req, res) => {
-  Tweet.find().then((data) => {
-    console.log("la liste des tweets est la suivante", data);
-  });
-});
+router.get('/lastTweets', (req, res) => {
+
+    Tweet.find().then(data => {
+        res.json({ result: true, message: data });
+
+    });
+})
 
 // delete tweets
 
@@ -69,32 +96,72 @@ router.delete("/deleteTweet", (req, res) => {
         });
     });
 });
-// route testée ok
+// route testée ok 
 
-//todo -> clef étrangère sur firstname username sur tweets -> ok done et testé
 
-// route sur les like
-router.post("/postLike", (req, res) => {
-  const tweetId = req.body._id;
-  const likedByUser = req.body.userId;
+// NEW ROUTE POST LIKE 
 
-  console.log("req body tweet id", tweetId);
+router.post('/postLike', (req, res) => {
+    const tweetId = req.body._id;
 
-  Tweet.findOne({ _id: tweetId }).then((data) => {
-    console.log(data.likes);
-    data.likes.push(likedByUser);
-    console.log(data.likes);
+    User.findOne({ username: req.body.username }).then(userData => {
+        if (userData === null) {
+            res.json({ result: false, error: 'user not found' })
+            return
+        } else {
+            // ajouter le user find one ici 
+            const likedByUser = userData._id
+            console.log(likedByUser)
 
-    data.save().then((updatedTweet) => {
-      res.json({
-        result: true,
-        message: "Tweet liked successfully",
-        tweet: updatedTweet,
-      });
-    });
-  });
-});
+            Tweet.findOne({ _id: tweetId })
+                .then(data => {
+                    console.log(data.userId)
+                    if (!data) {
+                        return res.status(404).json({ result: false, error: 'Tweet not found' });
+                    }
 
-// route sur les trends -> get hasttag tweet
+                    const likeTable = data.likes
+                    console.log(likeTable);
+
+                    const foundLike = likeTable.some((element) => String(element) === String(likedByUser));
+
+                    console.log(foundLike)
+
+                    if (foundLike) {
+                        const NewTable = likeTable.filter((element) => String(element) !== String(likedByUser))
+                        data.likes = NewTable
+
+                        data.save()
+                            .then(updatedTweet => {
+                                res.json({
+                                    result: true,
+                                    message: 'Tweet unliked',
+                                    tweet: updatedTweet
+                                });
+                            })
+                    } else {
+                        data.likes.push(likedByUser)
+                        data.save()
+                            .then(updatedTweet => {
+                                res.json({
+                                    result: true,
+                                    message: 'Tweet liked successfully',
+                                    tweet: updatedTweet
+                                });
+                            })
+
+                    }
+
+
+                });
+
+
+        }
+    })
+})
+
+
+
+
 
 module.exports = router;
