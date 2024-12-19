@@ -117,7 +117,6 @@ router.post('/postLike', (req, res) => {
                     console.log(likeTable);
 
                     const foundLike = likeTable.some((element) => String(element) === String(likedByUser));
-                    // const exists = arrayOfObjects.some(obj => obj.id === objToFind.id && obj.name === objToFind.name);
 
                     console.log(foundLike)
 
