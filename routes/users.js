@@ -32,14 +32,12 @@ router.post('/signup', (req, res) => {
         username: req.body.username,
         password: hash,
         token: uid2(32),
-        // canBookmark: true,
       });
 
       newUser.save().then(newDoc => {
         res.json({ result: true, token: newDoc.token });
       });
     } else {
-      // User already exists in database
       res.json({ result: false, error: 'User already exists' });
     }
   });
