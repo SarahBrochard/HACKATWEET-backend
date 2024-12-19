@@ -92,79 +92,67 @@ router.delete('/deleteTweet', (req, res) => {
 // route testée ok 
 
 
-//todo -> clef étrangère sur firstname username sur tweets -> ok done et testé 
+// NEW ROUTE POST LIKE 
 
-
-// route sur les like 
 router.post('/postLike', (req, res) => {
-    // ajouter le user find one ici 
     const tweetId = req.body._id;
-    const likedByUser = req.body.userId;
+
+    User.findOne({ username: req.body.username }).then(userData => {
+        if (userData === null) {
+            res.json({ result: false, error: 'user not found' })
+            return
+        } else {
+            // ajouter le user find one ici 
+            const likedByUser = userData._id
+            console.log(likedByUser)
+
+            Tweet.findOne({ _id: tweetId })
+                .then(data => {
+                    console.log(data.userId)
+                    if (!data) {
+                        return res.status(404).json({ result: false, error: 'Tweet not found' });
+                    }
+
+                    const likeTable = data.likes
+                    console.log(likeTable);
+
+                    const foundLike = likeTable.some((element) => String(element) === String(likedByUser));
+                    // const exists = arrayOfObjects.some(obj => obj.id === objToFind.id && obj.name === objToFind.name);
+
+                    console.log(foundLike)
+
+                    if (foundLike) {
+                        const NewTable = likeTable.filter((element) => String(element) !== String(likedByUser))
+                        data.likes = NewTable
+
+                        data.save()
+                            .then(updatedTweet => {
+                                res.json({
+                                    result: true,
+                                    message: 'Tweet unliked',
+                                    tweet: updatedTweet
+                                });
+                            })
+                    } else {
+                        data.likes.push(likedByUser)
+                        data.save()
+                            .then(updatedTweet => {
+                                res.json({
+                                    result: true,
+                                    message: 'Tweet liked successfully',
+                                    tweet: updatedTweet
+                                });
+                            })
+
+                    }
 
 
-
-    if (!tweetId || !likedByUser) {
-        return res.status(400).json({ result: false, error: 'Missing tweetId or userId' });
-    }
-
-    Tweet.findOne({ _id: tweetId })
-        .then(data => {
-
-            if (!data) {
-                return res.status(404).json({ result: false, error: 'Tweet not found' });
-            }
-
-            // En cours de création -> ajouter le retrait de l'user id si l'user a déjà aimé ce tweet
-
-            const likeTable = data.likes
-            console.log(likeTable);
-
-            // trouver s'il existe déjà un like par un user id 
-            const foundLike = likeTable.some((element) => element === likedByUser);
-
-            console.log(foundLike)
-
-            // condition si l'user a déjà aimé ce tweet  
-            if (foundLike) {
-                // res.json({ result: true, message: `Déjà aimé par user Id` });
-
-                const NewTable = likeTable.filter((e) => e !== likedByUser)
-                data.likes = NewTable
-
-                data.save()
-                    .then(updatedTweet => {
-                        res.json({
-                            result: true,
-                            message: 'Tweet unliked',
-                            tweet: updatedTweet
-                        });
-                    })
-
-            } else {
-
-                // res.json({ result: true, message: `Pas déjà aimé par user Id` });
+                });
 
 
-                // condition si l'user n'a pas déjà aimé ce tweet 
-
-                data.likes.push(likedByUser)
-                // console.log(likeTable)
-
-
-                data.save()
-                    .then(updatedTweet => {
-                        res.json({
-                            result: true,
-                            message: 'Tweet liked successfully',
-                            tweet: updatedTweet
-                        });
-                    })
-            }
-        });
-
-
+        }
+    })
 })
-
 
 
 
