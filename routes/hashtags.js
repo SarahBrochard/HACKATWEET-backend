@@ -8,13 +8,12 @@ const Hashtag = require('../models/hashtags');
 router.get('/all', (req, res) => {
 
     Hashtag.find().then(data => {
-        console.log('la liste des hashtag est la suivante', data);
         res.json({ result: true, message: data })
 
     });
 })
 
-// // route pour la redirection sur la page hastag avec les hashtag associés 
+// route pour récupération des hashtag suite à la redirection sur la page hashtag via le hashtagName 
 
 router.get('/', (req, res) => {
     console.log('Route pour hashtag existe');

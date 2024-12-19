@@ -60,7 +60,8 @@ router.post('/postTweet', (req, res) => {
 router.get('/lastTweets', (req, res) => {
 
     Tweet.find().then(data => {
-        console.log('la liste des tweets est la suivante', data);
+        res.json({ result: true, message: data });
+
     });
 })
 
@@ -118,8 +119,6 @@ router.post('/postLike', (req, res) => {
                     });
                 })
         });
-
-
 
 
 })
