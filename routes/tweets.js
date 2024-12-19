@@ -101,10 +101,22 @@ router.post('/postLike', (req, res) => {
     const tweetId = req.body._id;
     const likedByUser = req.body.userId;
 
-    console.log("req body tweet id", tweetId);
+
+
+    if (!tweetId || !likedByUser) {
+        return res.status(400).json({ result: false, error: 'Missing tweetId or userId' });
+    }
 
     Tweet.findOne({ _id: tweetId })
         .then(data => {
+
+            if (!data) {
+                return res.status(404).json({ result: false, error: 'Tweet not found' });
+            }
+
+            // En cours de création -> ajouter le retrait de l'user id si l'user a déjà aimé ce tweet
+
+
             console.log(data.likes);
             data.likes.push(likedByUser)
             console.log(data.likes)
