@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
         console.log('Liste des tweets pour le hashtag', hashtag, 'est la suivante', data);
 
         if (data.length === 0) {
-            return res.json({ result: false, message: `No tweets found for #${hashtag}` });
+            return res.json({ result: false, message: `No tweets found for ${hashtag}` });
         }
 
         res.json({ result: true, tweets: data });
