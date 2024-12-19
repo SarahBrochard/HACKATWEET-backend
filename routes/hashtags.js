@@ -13,7 +13,7 @@ router.get('/all', (req, res) => {
     });
 })
 
-// route pour récupération des hashtag suite à la redirection sur la page hashtag via le hashtagName 
+// route pour récupération des hashtag  
 
 router.get('/', (req, res) => {
     console.log('Route pour hashtag existe');
