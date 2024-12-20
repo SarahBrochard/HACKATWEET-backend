@@ -10,7 +10,52 @@ const User = require('../models/users');
 require('../models/connection');
 
 
-// pour l'enregistrement d'un nouveau tweet
+// pour l'enregistrement d'un nouveau tweet = essai route 1 Safety
+// router.post('/postTweet', (req, res) => {
+
+//     User.findOne({ username: req.body.username }).then(data => {
+//         if (data === null) {
+//             res.json({ result: false, error: 'user not found' })
+//             return
+//         } else {
+
+//             const text = req.body.text;
+//             const hashtagMatch = text.match(/#([\wÀ-ÿ]+)/g);
+//             console.log(hashtagMatch)
+
+//             const hashtag = hashtagMatch ? hashtagMatch[0] : null;
+
+
+
+//             const newTweet = new Tweet({
+//                 userId: data._id,
+//                 timing: new Date(),
+//                 text: req.body.text,
+//                 hashtag: hashtag,
+
+//             });
+
+
+
+//             newTweet.save().then(newDoc => {
+//                 const newHashtag = new Hashtag({
+//                     hashtagName: hashtag,
+//                 });
+//                 newHashtag.save().then(newHash => {
+//                     res.json({ result: true, message: newDoc, hastag: newHash });
+//                 });
+//             })
+
+
+//         }
+
+//     })
+// })
+
+// route testée et ok le 18/12/24
+
+// route améliorée 2 
+
 router.post('/postTweet', (req, res) => {
 
     User.findOne({ username: req.body.username }).then(data => {
@@ -20,32 +65,53 @@ router.post('/postTweet', (req, res) => {
         } else {
 
             const text = req.body.text;
-            // const hashtagMatch = text.match(/#\w+/);
             const hashtagMatch = text.match(/#([\wÀ-ÿ]+)/g);
             console.log(hashtagMatch)
 
-            const hashtag = hashtagMatch ? hashtagMatch[0] : null;
-
+            //const hashtag = hashtagMatch ? hashtagMatch[0] : null;
+            const hashtags = hashtagMatch || [];
 
 
             const newTweet = new Tweet({
                 userId: data._id,
                 timing: new Date(),
                 text: req.body.text,
-                hashtag: hashtag,
+                hashtags: hashtags,
 
             });
 
 
-
+            //1 ajouter la logique d'ajouter pour chaque hashtag trouvé un pus en base de donnée 
             newTweet.save().then(newDoc => {
-                const newHashtag = new Hashtag({
-                    hashtagName: hashtag,
-                });
-                newHashtag.save().then(newHash => {
-                    res.json({ result: true, message: newDoc, hastag: newHash });
-                });
+                console.log(newDoc)
+                res.json({ result: true, message: `nouveau tweet sauvegardé sans création de nouvel hashtag` });
+
             })
+
+            //2 ajouter la logique d'évitement des doublons 
+
+            // Hashtag.findOne({ hashtagName: hashtag }).then(hashtagData => {
+
+            //     if (hashtagData === null) {
+            //         // if pas de hastag déjà trouvé à ce nom 
+            //         newTweet.save().then(newDoc => {
+            //             const newHashtag = new Hashtag({
+            //                 hashtagName: hashtag,
+            //             });
+            //             newHashtag.save().then(newHash => {
+            //                 res.json({ result: true, message: newDoc, hastag: newHash });
+            //             });
+            //         })
+            //     } else {
+
+            //         // if un hashtag est déjà trouvé à ce nom 
+            //         newTweet.save().then(newDoc => {
+            //             console.log(newDoc)
+            //             res.json({ result: true, message: `nouveau tweet sauvegardé sans création de nouvel hashtag` });
+
+            //         })
+            //     }
+            // })
 
 
         }
@@ -54,8 +120,6 @@ router.post('/postTweet', (req, res) => {
 })
 
 
-
-// route testée et ok le 18/12/24
 
 // get Last Tweets
 router.get('/lastTweets', (req, res) => {

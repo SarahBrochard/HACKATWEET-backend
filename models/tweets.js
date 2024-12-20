@@ -7,7 +7,7 @@ const tweetSchema = mongoose.Schema({
     timing: Date,
     text: String,
     // ajout du hastag,
-    hashtag: String,
+    hashtags: [String],
     // ajout des likes avec user id 
     // likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }]
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
