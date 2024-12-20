@@ -33,10 +33,7 @@ router.get('/', (req, res) => {
         }
 
         res.json({ result: true, tweets: data });
-    }).catch(err => {
-        console.log('Erreur lors de la récupération des tweets :', err);
-        res.json({ result: false, error: `No tweet found for ${hashtag}` });
-    });
+    })
 });
 
 
