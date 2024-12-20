@@ -11,7 +11,7 @@ require('../models/connection');
 
 
 
-
+// route post tweet améliorée
 router.post('/postTweet', (req, res) => {
 
     User.findOne({ username: req.body.username }).then(data => {
@@ -42,10 +42,8 @@ router.post('/postTweet', (req, res) => {
                 hashtags.forEach((hashtag) => {
                     const newHashtag = new Hashtag({ hashtagName: hashtag });
                     newHashtag.save().then(() => {
-                        console.log('newhashtag saved')
+                        console.log(`newhashtag ${hashtag} saved`)
                     })
-
-
                 })
             })
 
