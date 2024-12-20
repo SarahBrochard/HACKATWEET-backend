@@ -68,6 +68,35 @@ router.get('/lastTweets', (req, res) => {
 // delete tweets 
 
 
+// router.delete('/deleteTweet', (req, res) => {
+//     console.log('delete wanting recieved ')
+//     const tweetId = req.body._id;
+
+//     if (!tweetId) {
+//         return res.status(400).json({ result: false, message: 'Tweet ID is required' });
+//     }
+
+//     // En cours de création -> ajout de la logique de comparaison entre le tweet ID et l'user ID 
+//     // si user id = tweet ID -> ouvrir la possibilité du delete 
+
+//     Tweet.deleteOne({ _id: tweetId })
+//         .then(result => {
+//             if (result.deletedCount === 0) {
+//                 return res.status(404).json({ result: false, message: 'Tweet not found' });
+//             }
+
+//             res.json({ result: true, message: `Tweet with ID ${tweetId} deleted` });
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             res.status(500).json({ result: false, error: "erreur dans la demande de suppression" });
+//         });
+
+//     // si user id !==  de tweet id -> return false -> " user not allowed "
+// });
+// // route testée ok 
+
+
 router.delete('/deleteTweet', (req, res) => {
     console.log('delete wanting recieved ')
     const tweetId = req.body._id;
@@ -75,6 +104,9 @@ router.delete('/deleteTweet', (req, res) => {
     if (!tweetId) {
         return res.status(400).json({ result: false, message: 'Tweet ID is required' });
     }
+
+    // En cours de création -> ajout de la logique de comparaison entre le tweet ID et l'user ID 
+    // si user id = tweet ID -> ouvrir la possibilité du delete 
 
     Tweet.deleteOne({ _id: tweetId })
         .then(result => {
@@ -88,9 +120,10 @@ router.delete('/deleteTweet', (req, res) => {
             console.error(err);
             res.status(500).json({ result: false, error: "erreur dans la demande de suppression" });
         });
+
+    // si user id !==  de tweet id -> return false -> " user not allowed "
 });
 // route testée ok 
-
 
 // NEW ROUTE POST LIKE 
 
