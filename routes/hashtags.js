@@ -15,6 +15,7 @@ router.get('/all', (req, res) => {
 
 // route pour récupération des hashtag  
 
+// En cours de modification  pour boucler sur un tableau de hashtag au niveau de la base de donnée 
 router.get('/', (req, res) => {
     console.log('Route pour hashtag existe');
 
