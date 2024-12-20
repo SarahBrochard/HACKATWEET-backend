@@ -65,41 +65,11 @@ router.get('/lastTweets', (req, res) => {
     });
 })
 
-// delete tweets 
-
-
-// router.delete('/deleteTweet', (req, res) => {
-//     console.log('delete wanting recieved ')
-//     const tweetId = req.body._id;
-
-//     if (!tweetId) {
-//         return res.status(400).json({ result: false, message: 'Tweet ID is required' });
-//     }
-
-//     // En cours de création -> ajout de la logique de comparaison entre le tweet ID et l'user ID 
-//     // si user id = tweet ID -> ouvrir la possibilité du delete 
-
-//     Tweet.deleteOne({ _id: tweetId })
-//         .then(result => {
-//             if (result.deletedCount === 0) {
-//                 return res.status(404).json({ result: false, message: 'Tweet not found' });
-//             }
-
-//             res.json({ result: true, message: `Tweet with ID ${tweetId} deleted` });
-//         })
-//         .catch(err => {
-//             console.error(err);
-//             res.status(500).json({ result: false, error: "erreur dans la demande de suppression" });
-//         });
-
-//     // si user id !==  de tweet id -> return false -> " user not allowed "
-// });
-// // route testée ok 
-
 
 router.delete('/deleteTweet', (req, res) => {
     console.log('delete wanting recieved ')
     const tweetId = req.body._id;
+    const username = req.body.username
 
     if (!tweetId) {
         return res.status(400).json({ result: false, message: 'Tweet ID is required' });
@@ -107,30 +77,60 @@ router.delete('/deleteTweet', (req, res) => {
 
     // En cours de création -> ajout de la logique de comparaison entre le tweet ID et l'user ID 
     // si user id = tweet ID -> ouvrir la possibilité du delete 
+    User.findOne({ username: username }).then(userData => {
+        if (userData === null) {
+            res.json({ result: false, error: 'user not found' })
+            return
+        } else {
 
-    Tweet.deleteOne({ _id: tweetId })
-        .then(result => {
-            if (result.deletedCount === 0) {
-                return res.status(404).json({ result: false, message: 'Tweet not found' });
-            }
+            const userDataId = userData.id
+            console.log(userDataId)
 
-            res.json({ result: true, message: `Tweet with ID ${tweetId} deleted` });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ result: false, error: "erreur dans la demande de suppression" });
-        });
+            // retrouver l'user Id du tweet 
+            Tweet.findOne({ _id: tweetId }).then(TweetData => {
 
-    // si user id !==  de tweet id -> return false -> " user not allowed "
+
+                if (!TweetData) {
+                    return res.status(404).json({ result: false, message: 'Tweet not found' });
+                }
+
+                console.log(TweetData.userId)
+                const tweetUserId = TweetData.userId
+
+                if (String(userDataId) === String(tweetUserId)) {
+                    Tweet.deleteOne({ _id: tweetId })
+                        .then(result => {
+                            if (result.deletedCount === 0) {
+                                return res.status(404).json({ result: false, message: 'Tweet not found' });
+                            }
+
+                            res.json({ result: true, message: `Tweet with ID ${tweetId} deleted` });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            res.status(500).json({ result: false, error: "erreur dans la demande de suppression" });
+                        });
+                } else {
+                    res.json({ result: false, message: `User unauthorized to delete tweet` });
+
+
+                }
+
+            })
+
+
+        }
+    })
 });
-// route testée ok 
 
 // NEW ROUTE POST LIKE 
 
 router.post('/postLike', (req, res) => {
     const tweetId = req.body._id;
+    const username = req.body.username
 
-    User.findOne({ username: req.body.username }).then(userData => {
+
+    User.findOne({ username: username }).then(userData => {
         if (userData === null) {
             res.json({ result: false, error: 'user not found' })
             return
