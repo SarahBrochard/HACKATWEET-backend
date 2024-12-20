@@ -65,7 +65,7 @@ router.get('/lastTweets', (req, res) => {
     });
 })
 
-
+// Route delete tweet if tweet user ID = username 
 router.delete('/deleteTweet', (req, res) => {
     console.log('delete wanting recieved ')
     const tweetId = req.body._id;
@@ -75,8 +75,6 @@ router.delete('/deleteTweet', (req, res) => {
         return res.status(400).json({ result: false, message: 'Tweet ID is required' });
     }
 
-    // En cours de création -> ajout de la logique de comparaison entre le tweet ID et l'user ID 
-    // si user id = tweet ID -> ouvrir la possibilité du delete 
     User.findOne({ username: username }).then(userData => {
         if (userData === null) {
             res.json({ result: false, error: 'user not found' })
