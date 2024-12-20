@@ -53,31 +53,6 @@ router.post('/postTweet', (req, res) => {
 })
 
 
-// Hashtag.findOne({ hashtagName: hashtag }).then(hashtagData => {
-
-//     if (hashtagData === null) {
-//         // if pas de hastag déjà trouvé à ce nom 
-//         newTweet.save().then(newDoc => {
-//             const newHashtag = new Hashtag({
-//                 hashtagName: hashtag,
-//             });
-//             newHashtag.save().then(newHash => {
-//                 res.json({ result: true, message: newDoc, hastag: newHash });
-//             });
-//         })
-//     } else {
-
-//         // if un hashtag est déjà trouvé à ce nom 
-//         newTweet.save().then(newDoc => {
-//             console.log(newDoc)
-//             res.json({ result: true, message: `nouveau tweet sauvegardé sans création de nouvel hashtag` });
-
-//         })
-//     }
-// })
-
-
-
 
 
 // get Last Tweets

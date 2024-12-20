@@ -13,9 +13,9 @@ router.get('/all', (req, res) => {
     });
 })
 
-// route pour récupération des hashtag  
 
-// En cours de modification  pour boucler sur un tableau de hashtag au niveau de la base de donnée 
+// récupération des tweets sur un tableau d'hashtag
+
 router.get('/', (req, res) => {
     console.log('Route pour hashtag existe');
 
@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
         return res.json({ result: false, error: 'Hashtag is required' });
     }
 
-    Tweet.find({ hashtag: hashtag }).then(data => {
+    Tweet.find({ hashtags: { $in: [hashtag] } }).then(data => {
         console.log('Liste des tweets pour le hashtag', hashtag, 'est la suivante', data);
 
         if (data.length === 0) {
