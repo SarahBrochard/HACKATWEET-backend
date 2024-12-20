@@ -20,7 +20,8 @@ router.post('/postTweet', (req, res) => {
         } else {
 
             const text = req.body.text;
-            const hashtagMatch = text.match(/#\w+/);
+            // const hashtagMatch = text.match(/#\w+/);
+            const hashtagMatch = text.match(/#([\wÀ-ÿ]+)/g);
             console.log(hashtagMatch)
 
             const hashtag = hashtagMatch ? hashtagMatch[0] : null;
