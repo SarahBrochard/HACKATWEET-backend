@@ -37,14 +37,31 @@ router.post('/postTweet', (req, res) => {
             });
 
 
-            newTweet.save().then(newDoc => {
+            newTweet.save().then(async newDoc => {
                 console.log(newDoc)
-                hashtags.forEach((hashtag) => {
-                    const newHashtag = new Hashtag({ hashtagName: hashtag });
-                    newHashtag.save().then(() => {
+                // hashtags.forEach((hashtag) => {
+                //     const newHashtag = new Hashtag({ hashtagName: hashtag });
+                //     newHashtag.save().then(() => {
+                //         console.log(`newhashtag ${hashtag} saved`)
+                //     })
+                // })
+                for (const hashtag of hashtags) {
+                    const hashtagFound = await Hashtag.findOne({ hashtagName: hashtag })
+                    // on ne veut pas récupérer la data dans le .then mais la récupérer dans la constante à gauche pour ensuite tout faire de haut en bas dans un sens logique 
+                    // on attend avec le await avant d'exécuter la suite mais on déclare en amont avec async pour qu'il comprenne await-> tout ce qui est dans des points then peut être transformer en await 
+                    if (hashtagFound) {
+                        continue
+                        // dans une boucle on fait continue pour passer au prochain item 
+
+                    } else {
+                        const newHashtag = new Hashtag({ hashtagName: hashtag });
+                        await newHashtag.save()
                         console.log(`newhashtag ${hashtag} saved`)
-                    })
-                })
+                    }
+
+                }
+                // mettre le res .Json après la boucle for à chaque fois et pas dans la boucle 
+                res.json({ result: true, message: 'la boucle des hashtags a été réalisée' })
             })
 
 
