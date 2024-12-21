@@ -13,7 +13,7 @@ require('../models/connection');
 
 // route post tweet améliorée
 router.post('/postTweet', (req, res) => {
-
+    // ici faire un find one par token et pas par username sur prochain projet 
     User.findOne({ username: req.body.username }).then(data => {
         if (data === null) {
             res.json({ result: false, error: 'user not found' })
